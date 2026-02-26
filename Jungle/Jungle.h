@@ -288,6 +288,71 @@ namespace dll
 			}
 		}
 
+		void insert(size_t index, T element)
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			if (index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
+
+			if (next_pos == 0)
+			{
+				*m_ptr = element;
+				has_elements = true;
+			}
+			else
+			{
+				if (next_pos + 1 < size)
+				{
+					for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
+					m_ptr[index] = element;
+					++next_pos;
+				}
+				else
+				{
+					++size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+					else
+					{
+						for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
+						m_ptr[index] = element;
+						++next_pos;
+					}
+				}
+			}
+		}
+		void insert(size_t index, T* element)
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			if (index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
+
+			if (next_pos == 0)
+			{
+				*m_ptr = *element;
+				has_elements = true;
+			}
+			else
+			{
+				if (next_pos + 1 < size)
+				{
+					for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
+					m_ptr[index] = *element;
+					++next_pos;
+				}
+				else
+				{
+					++size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+					else
+					{
+						for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
+						m_ptr[index] = *element;
+						++next_pos;
+					}
+				}
+			}
+		}
+
 		void remove(size_t index)
 		{
 			if (index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
