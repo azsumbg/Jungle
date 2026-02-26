@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Jungle/Jungle.vcxproj" Id="1bdc7c65-1aea-4ee4-97fe-044c81a7b872" />
+</Solution>
