@@ -57,6 +57,9 @@ const char* dll::EXCEPTION::get() const
 
 	case BAG_BAD_ERR:
 		return "Unknown error occurred !";
+
+	case BAG_NO_ELEMENTS:
+		return "Container does not have elements !";
 	}
 
 	return "Undescribed error occurred !";

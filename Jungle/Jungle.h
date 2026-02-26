@@ -18,6 +18,7 @@ constexpr int BAG_BAD_PTR{ 666 };
 constexpr int BAG_BAD_INDEX{ 667 };
 constexpr int BAG_BAD_ARG{ 668 };
 constexpr int BAG_BAD_ERR{ 669 };
+constexpr int BAG_NO_ELEMENTS{ 670 };
 
 struct FPOINT
 {
@@ -71,19 +72,132 @@ namespace dll
 		BAG(size_t capacity) :size{ capacity }, m_ptr{ reinterpret_cast<T*>(calloc(size, sizeof(T))) } {};
 		BAG(BAG& other)
 		{
-			if (!other)throw EXCEPTION(BAG_BAD_ARG);
+			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 
 			size = other.size;
 			m_ptr = reinterpret_cast<T*>(calloc(size, sizeof(T));
 			
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-			else if (size > 0)for (size_t i = 0; i < size; ++i)m_ptr[i] = other[i];
+			else if (size > 0)
+			{
+				for (size_t i = 0; i < size; ++i)m_ptr[i] = other.m_ptr[i];
+				has_elements = true;
+			}
+		}
+		BAG(BAG&& other)
+		{
+			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
+			
+			size = other.size;
+			m_ptr = other.m_ptr;
+		
+			other.m_ptr = nullptr;
 		}
 
+		~BAG()
+		{
+			free(m_ptr);
+		}
 
+		BAG& operator=(BAG& other)
+		{
+			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
+			if (m_ptr == other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
+			
+			free(m_ptr);
 
+			size = other.size;
+			m_ptr = reinterpret_cast<T*>(calloc(size, sizeof(T));
 
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else if (size > 0)
+			{
+				for (size_t i = 0; i < size; ++i)m_ptr[i] = other.m_ptr[i];
+				has_elements = true;
+			}
+		}
+		BAG& operator=(BAG&& other)
+		{
+			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 
+			free(m_ptr);
+			size = other.size;
+			m_ptr = other.m_ptr;
+			other.m_ptr = nullptr;
+		}
+
+		T& operator[](size_t index)
+		{
+			if (index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			if (!has_elements)throw EXCEPTION(BAG_NO_ELEMENTS);
+
+			return m_ptr[i];
+		}
+
+		size_t capacity()const
+		{
+			return size;
+		}
+		size_t size() const
+		{
+			return next_pos;
+		}
+		bool empty() const
+		{
+			if (has_elements)return false;
+
+			return true;
+		}
+
+		void push_back(T element)
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else
+			{
+				if (next_pos + 1 <= size)
+				{
+					m_ptr[next_pos] = element;
+					++next_pos;
+					has_elements = true;
+				}
+				else
+				{
+					++size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+					else
+					{
+						m_ptr[next_pos] = element;
+						++next_pos;
+					}
+				}
+			}
+		}
+		void push_back(T* element)
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else
+			{
+				if (next_pos + 1 <= size)
+				{
+					m_ptr[next_pos] = *element;
+					++next_pos;
+					has_elements = true;
+				}
+				else
+				{
+					++size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+					else
+					{
+						m_ptr[next_pos] = *element;
+						++next_pos;
+					}
+				}
+			}
+		}
 	};
 
 
