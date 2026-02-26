@@ -287,6 +287,21 @@ namespace dll
 				}
 			}
 		}
+
+		void remove(size_t index)
+		{
+			if (index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else
+			{
+				for (size_t count = index; count <= next_pos - 1; ++count)
+				{
+					m_ptr[count] = m_ptr[count + 1];
+				}
+			}
+
+			--next_pos;
+		}
 	};
 
 
