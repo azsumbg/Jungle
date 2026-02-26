@@ -162,48 +162,130 @@ namespace dll
 
 		void push_back(T element)
 		{
-			if (next_pos + 1 <= size)
-			{
-				m_ptr[next_pos] = element;
-				++next_pos;
-				has_elements = true;
-			}
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else
 			{
-				++size;
-				m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
-				if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-				else
+				if (next_pos + 1 <= size)
 				{
 					m_ptr[next_pos] = element;
 					++next_pos;
+					has_elements = true;
+				}
+				else
+				{
+					++size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+					else
+					{
+						m_ptr[next_pos] = element;
+						++next_pos;
+					}
 				}
 			}
 		}
 		void push_back(T* element)
 		{
-			if (next_pos + 1 <= size)
-			{
-				m_ptr[next_pos] = *element;
-				++next_pos;
-				has_elements = true;
-			}
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else
 			{
-				++size;
-				m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
-				if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-				else
+				if (next_pos + 1 <= size)
 				{
 					m_ptr[next_pos] = *element;
 					++next_pos;
+					has_elements = true;
+				}
+				else
+				{
+					++size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+					else
+					{
+						m_ptr[next_pos] = *element;
+						++next_pos;
+					}
 				}
 			}
 		}
 
 		void push_front(T element)
 		{
-			
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else
+			{
+				if (next_pos == 0)
+				{
+					*m_ptr = element;
+					has_elements = true;
+				}
+				else
+				{
+					if (next_pos + 1 < size)
+					{
+						for (size_t next_index = next_pos; next_index >= 1; --next_index)
+						{
+							m_ptr[next_index] = m_ptr[next_index - 1];
+						}
+						++next_pos;
+						*m_ptr = element;
+					}
+					else
+					{
+						++size;
+						m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+						if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+						else
+						{
+							for (size_t next_index = next_pos; next_index >= 1; --next_index)
+							{
+								m_ptr[next_index] = m_ptr[next_index - 1];
+							}
+						}
+						++next_pos;
+						*m_ptr = element;
+					}
+				}
+			}
+		}
+		void push_front(T* element)
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else
+			{
+				if (next_pos == 0)
+				{
+					*m_ptr = *element;
+					has_elements = true;
+				}
+				else
+				{
+					if (next_pos + 1 < size)
+					{
+						for (size_t next_index = next_pos; next_index >= 1; --next_index)
+						{
+							m_ptr[next_index] = m_ptr[next_index - 1];
+						}
+						++next_pos;
+						*m_ptr = *element;
+					}
+					else
+					{
+						++size;
+						m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+						if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+						else
+						{
+							for (size_t next_index = next_pos; next_index >= 1; --next_index)
+							{
+								m_ptr[next_index] = m_ptr[next_index - 1];
+							}
+						}
+						++next_pos;
+						*m_ptr = *element;
+					}
+				}
+			}
 		}
 	};
 
