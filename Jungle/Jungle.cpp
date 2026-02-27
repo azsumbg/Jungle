@@ -90,3 +90,48 @@ float dll::Distance(FPOINT first, FPOINT second)
 
 	return static_cast<float>(sqrt(a + b));
 }
+void dll::Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending = true)
+{
+	if (bag.empty())throw EXCEPTION(BAG_NO_ELEMENTS);
+
+	if (ascending)
+	{
+		bool ok = false;
+
+		while (!ok)
+		{
+			ok = true;
+
+			for (size_t i = 0; i < bag.size() - 1; ++i)
+			{
+				if (Distance(bag[i], criterion) > Distance(bag[i + 1], criterion))
+				{
+					FPOINT temp = bag[i];
+					bag[i] = bag[i + 1];
+					bag[i + 1] = temp;
+					ok = false;
+				}
+			}
+		}
+	}
+	else
+	{
+		bool ok = false;
+
+		while (!ok)
+		{
+			ok = true;
+
+			for (size_t i = 0; i < bag.size() - 1; ++i)
+			{
+				if (Distance(bag[i], criterion) > Distance(bag[i + 1], criterion))
+				{
+					FPOINT temp = bag[i];
+					bag[i] = bag[i + 1];
+					bag[i + 1] = temp;
+					ok = false;
+				}
+			}
+		}
+	}
+}

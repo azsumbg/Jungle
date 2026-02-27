@@ -64,24 +64,24 @@ namespace dll
 	{
 	private:
 		T* m_ptr{ nullptr };
-		size_t size{ 0 };
+		size_t m_size{ 0 };
 		size_t next_pos{ 0 };
 		bool has_elements{ false };
 
 	public:
-		BAG() :size{ 1 }, m_ptr{ reinterpret_cast<T*>(calloc(size, sizeof(T))) } {};
-		BAG(size_t capacity) :size{ capacity }, m_ptr{ reinterpret_cast<T*>(calloc(size, sizeof(T))) } {};
+		BAG() :m_size{ 1 }, m_ptr{ reinterpret_cast<T*>(calloc(m_size, sizeof(T))) } {};
+		BAG(size_t capacity) :m_size{ capacity }, m_ptr{ reinterpret_cast<T*>(calloc(m_size, sizeof(T))) } {};
 		BAG(BAG& other)
 		{
 			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 
-			size = other.size;
-			m_ptr = reinterpret_cast<T*>(calloc(size, sizeof(T));
+			m_size = other.m_size;
+			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T));
 			
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-			else if (size > 0)
+			else if (m_size > 0)
 			{
-				for (size_t i = 0; i < size; ++i)m_ptr[i] = other.m_ptr[i];
+				for (size_t i = 0; i < m_size; ++i)m_ptr[i] = other.m_ptr[i];
 				has_elements = true;
 			}
 		}
@@ -89,7 +89,7 @@ namespace dll
 		{
 			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 			
-			size = other.size;
+			m_size = other.m_size;
 			m_ptr = other.m_ptr;
 		
 			other.m_ptr = nullptr;
@@ -107,13 +107,13 @@ namespace dll
 			
 			free(m_ptr);
 
-			size = other.size;
-			m_ptr = reinterpret_cast<T*>(calloc(size, sizeof(T));
+			m_size = other.m_size;
+			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T));
 
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-			else if (size > 0)
+			else if (m_size > 0)
 			{
-				for (size_t i = 0; i < size; ++i)m_ptr[i] = other.m_ptr[i];
+				for (size_t i = 0; i < m_size; ++i)m_ptr[i] = other.m_ptr[i];
 				has_elements = true;
 			}
 		}
@@ -122,7 +122,7 @@ namespace dll
 			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 
 			free(m_ptr);
-			size = other.size;
+			m_size = other.m_size;
 			m_ptr = other.m_ptr;
 			other.m_ptr = nullptr;
 		}
@@ -181,7 +181,7 @@ namespace dll
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else
 			{
-				if (next_pos + 1 <= size)
+				if (next_pos + 1 <= m_size)
 				{
 					m_ptr[next_pos] = element;
 					++next_pos;
@@ -189,8 +189,8 @@ namespace dll
 				}
 				else
 				{
-					++size;
-					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					++m_size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * m_size));
 					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 					else
 					{
@@ -205,7 +205,7 @@ namespace dll
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else
 			{
-				if (next_pos + 1 <= size)
+				if (next_pos + 1 <= m_size)
 				{
 					m_ptr[next_pos] = *element;
 					++next_pos;
@@ -213,8 +213,8 @@ namespace dll
 				}
 				else
 				{
-					++size;
-					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					++m_size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * m_size));
 					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 					else
 					{
@@ -237,7 +237,7 @@ namespace dll
 				}
 				else
 				{
-					if (next_pos + 1 < size)
+					if (next_pos + 1 < m_size)
 					{
 						for (size_t next_index = next_pos; next_index >= 1; --next_index)
 						{
@@ -248,8 +248,8 @@ namespace dll
 					}
 					else
 					{
-						++size;
-						m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+						++m_size;
+						m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * m_size));
 						if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 						else
 						{
@@ -276,7 +276,7 @@ namespace dll
 				}
 				else
 				{
-					if (next_pos + 1 < size)
+					if (next_pos + 1 < m_size)
 					{
 						for (size_t next_index = next_pos; next_index >= 1; --next_index)
 						{
@@ -287,8 +287,8 @@ namespace dll
 					}
 					else
 					{
-						++size;
-						m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+						++m_size;
+						m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * m_size));
 						if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 						else
 						{
@@ -316,7 +316,7 @@ namespace dll
 			}
 			else
 			{
-				if (next_pos + 1 < size)
+				if (next_pos + 1 < m_size)
 				{
 					for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
 					m_ptr[index] = element;
@@ -324,8 +324,8 @@ namespace dll
 				}
 				else
 				{
-					++size;
-					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					++m_size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * m_size));
 					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 					else
 					{
@@ -348,7 +348,7 @@ namespace dll
 			}
 			else
 			{
-				if (next_pos + 1 < size)
+				if (next_pos + 1 < m_size)
 				{
 					for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
 					m_ptr[index] = *element;
@@ -356,8 +356,8 @@ namespace dll
 				}
 				else
 				{
-					++size;
-					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * size));
+					++m_size;
+					m_ptr = reinterpret_cast<T*>(realloc(m_ptr, sizeof(T) * m_size));
 					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 					else
 					{
@@ -389,7 +389,7 @@ namespace dll
 		|| std::is_same<wchar_t, T>::value || std::is_same<int, T>::value || std::is_same<float, T>::value
 		|| std::is_same<double, T>::value || std::is_same<long, T>::value;
 
-	template<IsPrimitive T>void PrimeSort(BAG<T>& bag, T criterion, bool ascending = true)
+	template<IsPrimitive T>void PrimeSort(BAG<T>& bag, bool ascending = true)
 	{
 		if (bag.empty())throw EXCEPTION(BAG_NO_ELEMENTS);
 
@@ -444,4 +444,5 @@ namespace dll
 
 	JUNGLE_API float Distance(FPOINT first, FPOINT second);
 
+	JUNGLE_API void Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending = true);
 }
