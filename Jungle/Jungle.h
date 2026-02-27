@@ -7,6 +7,7 @@
 #endif
 
 #include <random>
+#include <type_traits>
 
 constexpr float scr_width{ 900.0f };
 constexpr float scr_height{ 600.0f };
@@ -133,6 +134,21 @@ namespace dll
 			if (!has_elements)throw EXCEPTION(BAG_NO_ELEMENTS);
 
 			return m_ptr[i];
+		}
+
+		T& front() const
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			if (!has_elements)throw_EXCEPTION(BAG_NO_ELEMENTS);
+
+			return *m_ptr;
+		}
+		T& back() const
+		{
+			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			if (!has_elements)throw_EXCEPTION(BAG_NO_ELEMENTS);
+
+			return m_ptr[next_pos-1];
 		}
 
 		size_t capacity()const
@@ -369,7 +385,9 @@ namespace dll
 		}
 	};
 
-
+	template<typename T>concept IsPrimitive = std::is_same<char, T>::value || std::is_same<short, T>::value
+		|| std::is_same<wchar_t, T>::value || std::is_same<int, T>::value || std::is_same<float, T>::value
+		|| std::is_same<double, T>::value || std::is_same<long, T>::value;
 
 
 
