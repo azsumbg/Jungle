@@ -21,6 +21,9 @@ constexpr int BAG_BAD_ARG{ 668 };
 constexpr int BAG_BAD_ERR{ 669 };
 constexpr int BAG_NO_ELEMENTS{ 670 };
 
+enum class dirs { right = 0, left = 1, up = 2, down = 3, stop = 4 };
+enum class tiles { dirt = 0, water = 1, lava = 2 };
+
 struct FPOINT
 {
 	float x{ 0 };
@@ -94,6 +97,23 @@ namespace dll
 		static PROTON* create(float sx, float sy, float s_width, float s_height);
 	};
 
+	class JUNGLE_API TILE :public PROTON
+	{
+	private:
+		float _speed{ 1.0f };
+
+		TILE(tiles _type, float _where_x, float _where_y, dirs _dir);
+
+	public:
+		tiles type{ tiles::dirt };
+		dirs dir = dirs::stop;
+
+		bool move(dirs to_where, float gear);
+
+		void Release();
+
+		static TILE* create(tiles type, float where_x, float where_y, dirs dir);
+	};
 
 	/// TEMPLATES ***************************************
 	

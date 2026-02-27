@@ -179,7 +179,49 @@ dll::PROTON* dll::PROTON::create(float sx, float sy, float s_width, float s_heig
 
 //////////////////////////////////////////////////////
 
+//TILE CLASS ***************************************
 
+dll::TILE::TILE(tiles _type, float _where_x, float _where_y, dirs _dir) :PROTON(_where_x, _where_y, 50.0f, 50.0f)
+{
+	type = _type;
+	dir = _dir;
+}
+
+bool dll::TILE::move(dirs to_where, float gear)
+{
+	float my_speed = _speed + gear / 5.0f;
+
+	switch (dir)
+	{
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (end.x - my_speed <= -scr_width)return false;
+		break;
+
+	case dirs::right:
+		start.x -= my_speed;
+		set_edges();
+		if (start.x - my_speed >= 2.0f * scr_width)return false;
+		break;
+	}
+
+	return true;
+}
+
+void dll::TILE::Release()
+{
+	delete this;
+}
+
+dll::TILE* dll::TILE::create(tiles type, float where_x, float where_y, dirs dir)
+{
+	TILE* ret{ nullptr };
+
+	ret = new TILE(type, where_x, where_y, dir);
+}
+
+///////////////////////////////////////////////////
 
 
 
