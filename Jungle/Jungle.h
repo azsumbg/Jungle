@@ -389,13 +389,59 @@ namespace dll
 		|| std::is_same<wchar_t, T>::value || std::is_same<int, T>::value || std::is_same<float, T>::value
 		|| std::is_same<double, T>::value || std::is_same<long, T>::value;
 
+	template<IsPrimitive T>void PrimeSort(BAG<T>& bag, T criterion, bool ascending = true)
+	{
+		if (bag.empty())throw EXCEPTION(BAG_NO_ELEMENTS);
+
+		if (ascending)
+		{
+			bool ok = false;
+
+			while (!ok)
+			{
+				ok = true;
+
+				for (size_t i = 0; i < bag.size() - 1; ++i)
+				{
+					if (bag[i] > bag[i + 1])
+					{
+						T temp = bag[i];
+						bag[i] = bag[i + 1];
+						bag[i + 1] = temp;
+						ok = false;
+					}
+				}
+			}
+		}
+		else
+		{
+			bool ok = false;
+
+			while (!ok)
+			{
+				ok = true;
+
+				for (size_t i = 0; i < bag.size() - 1; ++i)
+				{
+					if (bag[i] < bag[i + 1])
+					{
+						T temp = bag[i];
+						bag[i] = bag[i + 1];
+						bag[i + 1] = temp;
+						ok = false;
+					}
+				}
+			}
+		}
+	}
 
 
 
 
 
 
+	// FUNCTIONS *************************************
 
-
+	JUNGLE_API float Distance(FPOINT first, FPOINT second);
 
 }

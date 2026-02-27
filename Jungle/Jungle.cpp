@@ -66,3 +66,27 @@ const char* dll::EXCEPTION::get() const
 }
 
 /////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// FUNCTIONS *************************************
+
+float dll::Distance(FPOINT first, FPOINT second)
+{
+	float a = static_cast<float>(pow(abs(second.x - first.x), 2));
+	float b = static_cast<float>(pow(abs(second.y - first.y), 2));
+
+	return static_cast<float>(sqrt(a + b));
+}
