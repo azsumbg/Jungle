@@ -60,6 +60,43 @@ namespace dll
 		const char* get() const;
 	};
 
+	class JUNGLE_API PROTON
+	{
+	protected:
+		float _width{ 0 };
+		float _height{ 0 };
+
+		bool _in_heap = false;
+
+	public:
+		FPOINT start{};
+		FPOINT end{};
+		FPOINT center{};
+		float x_rad{ 0 };
+		float y_rad{ 0 };
+
+		PROTON();
+		PROTON(float _sx, float _sy);
+		PROTON(float _sx, float _sy, float _s_width, float _s_height);
+
+		virtual ~PROTON() {};
+
+		float get_width() const;
+		float get_height() const;
+
+		void set_width(float new_width);
+		void set_height(float new_height);
+		void set_edges();
+		void new_dims(float new_width, float new_height);
+
+		bool in_heap() const;
+
+		static PROTON* create(float sx, float sy, float s_width, float s_height);
+	};
+
+
+	/// TEMPLATES ***************************************
+	
 	template<typename T> class BAG
 	{
 	private:
@@ -435,9 +472,7 @@ namespace dll
 		}
 	}
 
-
-
-
+	///////////////////////////////////////////////////////////////////////////////////
 
 
 	// FUNCTIONS *************************************
