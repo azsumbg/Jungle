@@ -22,7 +22,11 @@ constexpr int BAG_BAD_ERR{ 669 };
 constexpr int BAG_NO_ELEMENTS{ 670 };
 
 enum class dirs { right = 0, left = 1, up = 2, down = 3, stop = 4 };
-enum class tiles { dirt = 0, water = 1, lava = 2 };
+enum class tiles {
+	dirt = 0, water = 1, dirt_water = 2, tree1 = 3,
+	tree2 = 4, tree3 = 5, trap_axe = 6, trap_bolt = 7, trap_spear = 8
+};
+enum class platforms { flat_platform1 = 0, flat_platform2 = 1, high_platform = 2 };
 
 struct FPOINT
 {
@@ -113,6 +117,24 @@ namespace dll
 		void Release();
 
 		static TILE* create(tiles type, float where_x, float where_y, dirs dir);
+	};
+
+	class JUNGLE_API PLATFORM :public PROTON
+	{
+	private:
+		float _speed{ 1.0f };
+
+		PLATFORM(platforms _type, float _where_x, float _where_y, dirs _dir);
+
+	public:
+		platforms type{ platforms::flat_platform1 };
+		dirs dir = dirs::stop;
+
+		bool move(dirs to_where, float gear);
+
+		void Release();
+
+		static PLATFORM* create(platforms type, float where_x, float where_y, dirs dir);
 	};
 
 	/// TEMPLATES ***************************************

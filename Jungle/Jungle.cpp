@@ -223,7 +223,64 @@ dll::TILE* dll::TILE::create(tiles type, float where_x, float where_y, dirs dir)
 
 ///////////////////////////////////////////////////
 
+//PLATFORM CLASS ***************************************
 
+dll::PLATFORM::PLATFORM(platforms _type, float _where_x, float _where_y, dirs _dir) :PROTON(_where_x, _where_y)
+{
+	type = _type;
+	dir = _dir;
+
+	switch (_type)
+	{
+	case platforms::flat_platform1:
+		new_dims(140.0f, 80.0f);
+		break;
+
+	case platforms::flat_platform2:
+		new_dims(150.0f, 94.0f);
+		break;
+
+	case platforms::high_platform:
+		new_dims(110.0f, 90.0f);
+		break;
+	}
+}
+
+bool dll::PLATFORM::move(dirs to_where, float gear)
+{
+	float my_speed = _speed + gear / 5.0f;
+
+	switch (dir)
+	{
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (end.x - my_speed <= -scr_width)return false;
+		break;
+
+	case dirs::right:
+		start.x -= my_speed;
+		set_edges();
+		if (start.x - my_speed >= 2.0f * scr_width)return false;
+		break;
+	}
+
+	return true;
+}
+
+void dll::PLATFORM::Release()
+{
+	delete this;
+}
+
+dll::PLATFORM* dll::PLATFORM::create(platforms type, float where_x, float where_y, dirs dir)
+{
+	PLATFORM* ret{ nullptr };
+
+	ret = new PLATFORM(type, where_x, where_y, dir);
+}
+
+///////////////////////////////////////////////////
 
 
 
