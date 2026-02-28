@@ -31,6 +31,7 @@ enum class tiles {
 	tree2 = 4, tree3 = 5, trap_axe = 6, trap_bolt = 7, trap_spear = 8
 };
 enum class platforms { flat_platform1 = 0, flat_platform2 = 1, high_platform = 2 };
+enum class shots { arrow = 0, tomahawk = 1 };
 
 struct FPOINT
 {
@@ -173,6 +174,37 @@ namespace dll
 
 		static HERO* create(float sx, float sy);
 	};
+
+	class JUNGLE_API SHOT :public PROTON
+	{
+	private:
+		float move_sx{ 0 };
+		float move_sy{ 0 };
+		float move_ex{ 0 };
+		float move_ey{ 0 };
+		float slope{ 0 };
+		float intercept{ 0 };
+
+		float _speed{ 0 };
+
+		bool ver_dir{ 0 };
+		bool hor_dir{ 0 };
+
+		bool set_path(float _end_x, float _end_y);
+
+		SHOT(shots _type, float _start_x, float _start_y, float _target_x, float _target_y);
+
+	public:
+		shots type{ shots::tomahawk };
+		dirs dir{ dirs::stop };
+
+		int damage{ 0 };
+
+		bool move(float gear);
+		static SHOT* create(shots type, float start_x, float start_y, float target_x, float target_y);
+		void Release();
+	};
+
 	
 	
 	/// TEMPLATES ***************************************

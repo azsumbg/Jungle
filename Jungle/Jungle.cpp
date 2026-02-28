@@ -429,6 +429,132 @@ dll::HERO* dll::HERO::create(float sx, float sy)
 
 ///////////////////////////////////////////////////
 
+// CLASS SHOT *************************************
+
+bool dll::SHOT::set_path(float _end_x, float _end_y)
+{
+	hor_dir = false;
+	ver_dir = false;
+
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = _end_x;
+	move_ey = _end_y;
+
+	if (move_sx == move_ex || (move_ex > start.x && move_ex <= end.x))
+	{
+		ver_dir = true;
+		return;
+	}
+	if (move_sy == move_ey || (move_ey > start.y && move_ey <= end.y))
+	{
+		hor_dir = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = start.y - start.x * slope;
+}
+
+dll::SHOT::SHOT(shots _type, float _start_x, float _start_y, float _target_x, float _target_y) :PROTON(_start_x, _start_y)
+{
+	type = _type;
+
+	if (_start_x >= _target_x)dir = dirs::left;
+	else dir = dirs::right;
+
+	switch (type)
+	{
+	case shots::arrow:
+		new_dims(19.0f, 12.0f);
+		_speed = 5.5f;
+		damage = 10;
+		break;
+
+	case shots::tomahawk:
+		new_dims(17.0f, 22.0f);
+		_speed = 4.5f;
+		damage = 15;
+		break;
+	}
+
+	set_path(_target_x, _target_y);
+}
+
+bool dll::SHOT::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (hor_dir)
+	{
+		switch (dir)
+		{
+		case dirs::left:
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= 0)return false;
+			break;
+
+		case dirs::right:
+			start.x += my_speed;
+			set_edges();
+			if (start.x >= scr_width)return false;
+			break;
+		}
+	}
+	else if (ver_dir)
+	{
+		if (start.y >= move_ey)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.y <= sky)return false;
+		}
+		else
+		{
+			start.y += my_speed;
+			set_edges();
+			if (start.y >= ground)return false;
+		}
+	}
+	else
+	{
+		switch (dir)
+		{
+		case dirs::left:
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= 0 || start.y >= ground || end.y <= sky)return false;
+			break;
+
+		case dirs::right:
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (start.x >= scr_width || start.y >= ground || end.y <= sky)return false;
+			break;
+		}
+	}
+
+	return true;
+}
+void dll::SHOT::Release()
+{
+	delete this;
+}
+dll::SHOT* dll::SHOT::create(shots type, float start_x, float start_y, float target_x, float target_y)
+{
+	SHOT* ret{ nullptr };
+
+	ret = new SHOT(type, start_x, start_y, target_x, target_y);
+	return ret;
+}
+
+//////////////////////////////////////////////////
+
+
 
 
 // FUNCTIONS *************************************
