@@ -554,8 +554,112 @@ dll::SHOT* dll::SHOT::create(shots type, float start_x, float start_y, float tar
 
 //////////////////////////////////////////////////
 
+//EVILS CLASS ************************************
 
+bool dll::EVIL::set_path(float _end_x, float _end_y)
+{
+	hor_dir = false;
+	ver_dir = false;
 
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = _end_x;
+	move_ey = _end_y;
+
+	if (move_sx == move_ex || (move_ex > start.x && move_ex <= end.x))
+	{
+		ver_dir = true;
+		return;
+	}
+	if (move_sy == move_ey || (move_ey > start.y && move_ey <= end.y))
+	{
+		hor_dir = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = start.y - start.x * slope;
+}
+
+dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
+{
+	type = _type;
+
+	switch (type)
+	{
+	case evils::flyer:
+		new_dims(40.0f, 43.0f);
+		max_frames = 15;
+		frame_delay = 5;
+		_speed = 0.8f;
+		damage = 5;
+		lifes = 80;
+		break;
+
+	case evils::mushroom:
+		new_dims(40.0f, 41.0f);
+		max_frames = 36;
+		frame_delay = 2;
+		_speed = 0.7f;
+		damage = 8;
+		lifes = 60;
+		break;
+
+	case evils::snail:
+		new_dims(45.0f, 45.0f);
+		max_frames = 31;
+		frame_delay = 2;
+		_speed = 0.5f;
+		damage = 10;
+		lifes = 90;
+		break;
+
+	case evils::octopus:
+		new_dims(40.0f, 51.0f);
+		max_frames = 35;
+		frame_delay = 2;
+		_speed = 0.5f;
+		damage = 12;
+		lifes = 100;
+		break;
+
+	}
+
+	max_frame_delay = frame_delay;
+}
+
+bool move(float gear);
+void jump(float gear);
+
+int dll::EVIL::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = max_frame_delay;
+		++frame;
+		if (frame > max_frames)frame = 0;
+	}
+
+	return frame;
+}
+
+void dll::EVIL::Release()
+{
+	delete this;
+}
+
+dll::EVIL* dll::EVIL::create(evils type, float start_x, float start_y)
+{
+	EVIL* ret{ nullptr };
+
+	ret = new EVIL(type, start_x, start_y);
+
+	return ret;
+}
+
+//////////////////////////////////////////////////
 
 // FUNCTIONS *************************************
 

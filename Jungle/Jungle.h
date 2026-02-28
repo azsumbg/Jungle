@@ -24,6 +24,9 @@ constexpr int BAG_NO_ELEMENTS{ 670 };
 constexpr char RUN{ 0b00000000 };
 constexpr char JUMP_UP{ 0b00000010 };
 constexpr char JUMP_DOWN{ 0b00000100 };
+constexpr char JUMP_FLY_UP{ 0b00001000 };
+constexpr char JUMP_FLY_DOWN{ 0b00010000 };
+constexpr char JUMP_FLY_STRAIGHT{ 0b00010000 };
 
 enum class dirs { right = 0, left = 1, up = 2, down = 3, stop = 4 };
 enum class tiles {
@@ -32,6 +35,8 @@ enum class tiles {
 };
 enum class platforms { flat_platform1 = 0, flat_platform2 = 1, high_platform = 2 };
 enum class shots { arrow = 0, tomahawk = 1 };
+enum class evils { flyer = 0, mushroom = 1, snail = 2, octopus = 3 };
+
 
 struct FPOINT
 {
@@ -205,7 +210,47 @@ namespace dll
 		void Release();
 	};
 
-	
+	class JUNGLE_API EVIL :public PROTON
+	{
+	private:
+		float move_sx{ 0 };
+		float move_sy{ 0 };
+		float move_ex{ 0 };
+		float move_ey{ 0 };
+		float slope{ 0 };
+		float intercept{ 0 };
+
+		float _speed{ 0 };
+
+		bool ver_dir{ 0 };
+		bool hor_dir{ 0 };
+
+		int max_frames{ 0 };
+		int frame_delay{ 0 };
+		int max_frame_delay{ 0 };
+		int frame{ 0 };
+		
+		bool set_path(float _end_x, float _end_y);
+
+		EVIL(evils _type, float _sx, float _sy);
+
+	public:
+		evils type{ evils::flyer };
+		dirs dir{ dirs::stop };
+		char state{ RUN };
+
+		int lifes{ 0 };
+		int damage{ 0 };
+		bool in_jump{ false };
+
+		bool move(float gear);
+		void jump(float gear);
+		int get_frame();
+
+		void Release();
+
+		static EVIL* create(evils type, float start_x, float start_y);
+	};
 	
 	/// TEMPLATES ***************************************
 	
