@@ -560,4 +560,8 @@ namespace dll
 	JUNGLE_API float Distance(FPOINT first, FPOINT second);
 
 	JUNGLE_API void Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending = true);
+
+	JUNGLE_API bool Intersect(FRECT first, FRECT second);
+
+	JUNGLE_API bool Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, float y_rad1, float y_rad2);
 }

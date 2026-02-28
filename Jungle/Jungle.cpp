@@ -485,3 +485,15 @@ void dll::Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending = true)
 		}
 	}
 }
+
+bool dll::Intersect(FRECT first, FRECT second)
+{
+	if (!(first.left > second.right || first.right < second.left
+		|| first.up>second.down || first.down < second.up))return true;
+	return false;
+}
+bool dll::Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, float y_rad1, float y_rad2)
+{
+	if (abs(second.x - first.x) <= x_rad1 + x_rad2 && abs(second.y - first.y) <= y_rad1 + y_rad2)return true;
+	return false;
+}
