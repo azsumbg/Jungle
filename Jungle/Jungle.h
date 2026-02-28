@@ -21,6 +21,10 @@ constexpr int BAG_BAD_ARG{ 668 };
 constexpr int BAG_BAD_ERR{ 669 };
 constexpr int BAG_NO_ELEMENTS{ 670 };
 
+constexpr char RUN{ 0b00000000 };
+constexpr char JUMP_UP{ 0b00000010 };
+constexpr char JUMP_DOWN{ 0b00000100 };
+
 enum class dirs { right = 0, left = 1, up = 2, down = 3, stop = 4 };
 enum class tiles {
 	dirt = 0, water = 1, dirt_water = 2, tree1 = 3,
@@ -137,6 +141,40 @@ namespace dll
 		static PLATFORM* create(platforms type, float where_x, float where_y, dirs dir);
 	};
 
+	class JUNGLE_API HERO :public PROTON
+	{
+	private:
+		float _speed = 0.3f;
+
+		float jump_sx{ 0 };
+		float jump_ex{ 0 };
+		float jump_sy{ 0 };
+		float jump_ey{ 0 };
+
+		int frame{ 0 };
+		int frame_delay{ 15 };
+		
+		HERO(float _sx, float _sy);
+
+	public:
+		dirs dir{ dirs::stop };
+		char state{ RUN };
+		bool in_jump = false;
+
+		int lifes{ 100 };
+		int strenght{ 50 };
+		int shield{ 5 };
+
+		void move(float gear);
+		void jump(float gear);
+		int get_frame();
+
+		void Release();
+
+		static HERO* create(float sx, float sy);
+	};
+	
+	
 	/// TEMPLATES ***************************************
 	
 	template<typename T> class BAG

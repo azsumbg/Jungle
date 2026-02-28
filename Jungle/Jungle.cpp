@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "jungle.h"
 
-
 // RANDIT CLASS *************************************
 
 dll::RANDIT::RANDIT()
@@ -282,11 +281,153 @@ dll::PLATFORM* dll::PLATFORM::create(platforms type, float where_x, float where_
 
 ///////////////////////////////////////////////////
 
+// HERO CLASS ************************************
+
+dll::HERO::HERO(float _sx, float _sy) :PROTON(_sx, _sy, 45.0f, 50.0f) {};
+	
+void dll::HERO::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (state != RUN)return;
+
+	switch (dir)
+	{
+	case dirs::left:
+		if (start.x - my_speed >= 0)
+		{
+			start.x -= my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::right:
+		if (end.x + my_speed <= scr_width)
+		{
+			start.x += my_speed;
+			set_edges();
+		}
+		break;
+	}
+}
+void dll::HERO::jump(float gear)
+{
+	float my_speed = _speed + gear / 5.0f;
+
+	if (!in_jump)
+	{
+		jump_sx = start.x;
+		jump_sy = start.y;
+		jump_ey = start.y - 100.0f;
+		
+		state = JUMP_UP;
+
+		if (dir == dirs::left)jump_ex = jump_sx - 20.0f;
+		else jump_ex = jump_sx + 20.0f;
+	}
+	else
+	{
+		if (state == JUMP_UP)
+		{
+			switch (dir)
+			{
+			case dirs::right:
+				if (end.x + my_speed >= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
+				if (start.y - my_speed >= jump_ey)start.y -= my_speed;
+				set_edges();
+				if (start.y < jump_ey)
+				{
+					state = JUMP_DOWN;
+
+					jump_ex = jump_sx + 40.0f;
+					jump_ey = jump_sy;
+
+					jump_sx = start.x;
+					jump_sy = start.y;
+				}
+				break;
 
 
+			case dirs::left:
+				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
+				if (start.y - my_speed >= jump_ey)start.y -= my_speed;
+				set_edges();
+				if (start.y < jump_ey)
+				{
+					state = JUMP_DOWN;
+					
+					jump_ex = jump_sx - 40.0f;
+					jump_ey = jump_sy;
 
+					jump_sx = start.x;
+					jump_sy = start.y;
 
+				}
+				break;
+			}
+		}
+		else if (state == JUMP_DOWN)
+		{
+			switch (dir)
+			{
+			case dirs::right:
+				if (end.x + my_speed >= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
+				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				set_edges();
+				if (start.y >= jump_ey)
+				{
+					state = RUN;
+					in_jump = false;
 
+					start.y = jump_ey;
+					set_edges();
+				}
+				break;
+
+			case dirs::left:
+				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
+				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				set_edges();
+				if (start.y >= jump_ey)
+				{
+					state = RUN;
+					in_jump = false;
+
+					start.y = jump_ey;
+					set_edges();
+				}
+				break;
+			}
+		}
+	}
+}
+int dll::HERO::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = 15;
+		++frame;
+		if (frame > 3)frame = 0;
+	}
+	return frame;
+}
+
+void dll::HERO::Release()
+{
+	delete this;
+}
+
+dll::HERO* dll::HERO::create(float sx, float sy)
+{
+	HERO* ret{ nullptr };
+
+	ret = new HERO(sx, sy);
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
 
 
 
