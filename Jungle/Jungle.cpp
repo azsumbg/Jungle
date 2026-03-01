@@ -218,6 +218,8 @@ dll::TILE* dll::TILE::create(tiles type, float where_x, float where_y, dirs dir)
 	TILE* ret{ nullptr };
 
 	ret = new TILE(type, where_x, where_y, dir);
+
+	return ret;
 }
 
 ///////////////////////////////////////////////////
@@ -277,6 +279,8 @@ dll::PLATFORM* dll::PLATFORM::create(platforms type, float where_x, float where_
 	PLATFORM* ret{ nullptr };
 
 	ret = new PLATFORM(type, where_x, where_y, dir);
+
+	return ret;
 }
 
 ///////////////////////////////////////////////////
@@ -463,7 +467,7 @@ dll::HERO* dll::HERO::create(float sx, float sy)
 
 // CLASS SHOT *************************************
 
-bool dll::SHOT::set_path(float _end_x, float _end_y)
+void dll::SHOT::set_path(float _end_x, float _end_y)
 {
 	hor_dir = false;
 	ver_dir = false;
@@ -588,7 +592,7 @@ dll::SHOT* dll::SHOT::create(shots type, float start_x, float start_y, float tar
 
 //EVILS CLASS ************************************
 
-bool dll::EVIL::set_path(float _end_x, float _end_y)
+void dll::EVIL::set_path(float _end_x, float _end_y)
 {
 	hor_dir = false;
 	ver_dir = false;
@@ -924,7 +928,7 @@ float dll::Distance(FPOINT first, FPOINT second)
 
 	return static_cast<float>(sqrt(a + b));
 }
-void dll::Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending = true)
+void dll::Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending)
 {
 	if (bag.empty())throw EXCEPTION(BAG_NO_ELEMENTS);
 

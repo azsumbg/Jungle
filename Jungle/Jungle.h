@@ -54,6 +54,8 @@ struct FRECT
 namespace dll
 {
 	/// TEMPLATES ***************************************
+	
+	class JUNGLE_API EXCEPTION;
 
 	template<typename T> class BAG
 	{
@@ -71,7 +73,7 @@ namespace dll
 			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 
 			m_size = other.m_size;
-			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T));
+			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T)));
 
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else if (m_size > 0)
@@ -103,7 +105,7 @@ namespace dll
 			free(m_ptr);
 
 			m_size = other.m_size;
-			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T));
+			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T)));
 
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else if (m_size > 0)
@@ -128,20 +130,20 @@ namespace dll
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			if (!has_elements)throw EXCEPTION(BAG_NO_ELEMENTS);
 
-			return m_ptr[i];
+			return m_ptr[index];
 		}
 
 		T& front() const
 		{
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-			if (!has_elements)throw_EXCEPTION(BAG_NO_ELEMENTS);
+			if (!has_elements)throw EXCEPTION(BAG_NO_ELEMENTS);
 
 			return *m_ptr;
 		}
 		T& back() const
 		{
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
-			if (!has_elements)throw_EXCEPTION(BAG_NO_ELEMENTS);
+			if (!has_elements)throw EXCEPTION(BAG_NO_ELEMENTS);
 
 			return m_ptr[next_pos - 1];
 		}
@@ -581,7 +583,7 @@ namespace dll
 		bool ver_dir{ 0 };
 		bool hor_dir{ 0 };
 
-		bool set_path(float _end_x, float _end_y);
+		void set_path(float _end_x, float _end_y);
 
 		SHOT(shots _type, float _start_x, float _start_y, float _target_x, float _target_y);
 
@@ -623,7 +625,7 @@ namespace dll
 
 		RANDIT _rand{};
 		
-		bool set_path(float _end_x, float _end_y);
+		void set_path(float _end_x, float _end_y);
 
 		EVIL(evils _type, float _sx, float _sy);
 
@@ -654,8 +656,6 @@ namespace dll
 		friend char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks);
 	};
 	
-	
-
 	// FUNCTIONS *************************************
 
 	JUNGLE_API float Distance(FPOINT first, FPOINT second);
@@ -666,5 +666,5 @@ namespace dll
 
 	JUNGLE_API bool Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, float y_rad1, float y_rad2);
 
-	JUNGLE_API char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks);
+	char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks);
 }
