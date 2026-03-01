@@ -229,6 +229,11 @@ namespace dll
 		float slope{ 0 };
 		float intercept{ 0 };
 
+		float jump_sx{ 0 };
+		float jump_ex{ 0 };
+		float jump_sy{ 0 };
+		float jump_ey{ 0 };
+
 		float _speed{ 0 };
 
 		bool ver_dir{ 0 };

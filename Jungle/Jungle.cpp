@@ -752,17 +752,105 @@ bool dll::EVIL::move(float gear)
 				if (end.y >= ground)set_path(start.x + 100.0f, sky);
 			}
 			break;
-
-
-
-
-
 		}
+
+		if (start.x >= scr_width + scr_width / 2.0f || end.x <= -scr_width / 2.0f
+			|| start.y >= ground || end.y <= sky)return false;
 	}
 
-	return false;
+	return true;
 }
-void jump(float gear);
+void dll::EVIL::jump(float gear)
+{
+	float my_speed = _speed + gear / 5.0f;
+
+	if (!in_jump)
+	{
+		jump_sx = start.x;
+		jump_sy = start.y;
+		jump_ey = start.y - 100.0f;
+
+		state = JUMP_UP;
+
+		if (dir == dirs::left)jump_ex = jump_sx - 20.0f;
+		else jump_ex = jump_sx + 20.0f;
+	}
+	else
+	{
+		if (state == JUMP_UP)
+		{
+			switch (dir)
+			{
+			case dirs::right:
+				if (end.x + my_speed >= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
+				if (start.y - my_speed >= jump_ey)start.y -= my_speed;
+				set_edges();
+				if (start.y < jump_ey)
+				{
+					state = JUMP_DOWN;
+
+					jump_ex = jump_sx + 40.0f;
+					jump_ey = jump_sy;
+
+					jump_sx = start.x;
+					jump_sy = start.y;
+				}
+				break;
+
+
+			case dirs::left:
+				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
+				if (start.y - my_speed >= jump_ey)start.y -= my_speed;
+				set_edges();
+				if (start.y < jump_ey)
+				{
+					state = JUMP_DOWN;
+
+					jump_ex = jump_sx - 40.0f;
+					jump_ey = jump_sy;
+
+					jump_sx = start.x;
+					jump_sy = start.y;
+
+				}
+				break;
+			}
+		}
+		else if (state == JUMP_DOWN)
+		{
+			switch (dir)
+			{
+			case dirs::right:
+				if (end.x + my_speed >= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
+				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				set_edges();
+				if (start.y >= jump_ey)
+				{
+					state = RUN;
+					in_jump = false;
+
+					start.y = jump_ey;
+					set_edges();
+				}
+				break;
+
+			case dirs::left:
+				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
+				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				set_edges();
+				if (start.y >= jump_ey)
+				{
+					state = RUN;
+					in_jump = false;
+
+					start.y = jump_ey;
+					set_edges();
+				}
+				break;
+			}
+		}
+	}
+}
 void dll::EVIL::set_platform(FRECT current_platform)
 {
 	platform = current_platform;
