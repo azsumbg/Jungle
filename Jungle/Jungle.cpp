@@ -981,3 +981,27 @@ bool dll::Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, flo
 	if (abs(second.x - first.x) <= x_rad1 + x_rad2 && abs(second.y - first.y) <= y_rad1 + y_rad2)return true;
 	return false;
 }
+
+char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks)
+{
+	char ret = RUN;
+
+	if (evil.type == evils::flyer)
+	{
+		if (abs(hero_center.x - evil.center.x) >= 200.0f && abs(hero_center.y - evil.center.y) >= 200.0f
+			&& evil._rand(0, 10) == 6)ret = SHOOT;
+	}
+	else
+	{
+		if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
+			&& evil._rand(0, 10) == 6)ret = SHOOT;
+		else if (!tomahawks.empty())
+		{
+			Sort(tomahawks, evil.center);
+			if (abs(tomahawks[0].x - evil.center.x) >= 100.0f && abs(tomahawks[0].y - evil.center.y) <= 200.0f
+				&& !evil.in_jump)ret = JUMP_UP;
+		}
+	}
+
+	return ret;
+}

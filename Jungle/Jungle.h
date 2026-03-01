@@ -24,11 +24,9 @@ constexpr int BAG_NO_ELEMENTS{ 670 };
 constexpr char RUN{ 0b00000000 };
 constexpr char JUMP_UP{ 0b00000010 };
 constexpr char JUMP_DOWN{ 0b00000100 };
-constexpr char JUMP_FLY_UP{ 0b00001000 };
-constexpr char JUMP_FLY_DOWN{ 0b00010000 };
-constexpr char JUMP_FLY_STRAIGHT{ 0b00010000 };
-constexpr char FALLING{ 0b00100000 };
-constexpr char STOP{ 0b01000000 };
+constexpr char FALLING{ 0b00001000 };
+constexpr char STOP{ 0b00010000 };
+constexpr char SHOOT{ 0b00100000 };
 
 enum class dirs { right = 0, left = 1, up = 2, down = 3, stop = 4 };
 enum class tiles {
@@ -55,228 +53,8 @@ struct FRECT
 
 namespace dll
 {
-	class JUNGLE_API RANDIT
-	{
-	private:
-		std::mt19937* twister{ nullptr };
-
-	public:
-		RANDIT();
-		~RANDIT();
-
-		int operator()(int min, int max);
-		float operator()(float min, float max);
-	};
-
-	class JUNGLE_API EXCEPTION
-	{
-	private:
-		int _err_code{ 0 };
-
-	public:
-		EXCEPTION(int which_err);
-
-		const char* get() const;
-	};
-
-	class JUNGLE_API PROTON
-	{
-	protected:
-		float _width{ 0 };
-		float _height{ 0 };
-
-		bool _in_heap = false;
-
-	public:
-		FPOINT start{};
-		FPOINT end{};
-		FPOINT center{};
-		float x_rad{ 0 };
-		float y_rad{ 0 };
-
-		PROTON();
-		PROTON(float _sx, float _sy);
-		PROTON(float _sx, float _sy, float _s_width, float _s_height);
-
-		virtual ~PROTON() {};
-
-		float get_width() const;
-		float get_height() const;
-
-		void set_width(float new_width);
-		void set_height(float new_height);
-		void set_edges();
-		void new_dims(float new_width, float new_height);
-
-		bool in_heap() const;
-
-		static PROTON* create(float sx, float sy, float s_width, float s_height);
-	};
-
-	class JUNGLE_API TILE :public PROTON
-	{
-	private:
-		float _speed{ 1.0f };
-
-		TILE(tiles _type, float _where_x, float _where_y, dirs _dir);
-
-	public:
-		tiles type{ tiles::dirt };
-		dirs dir = dirs::stop;
-
-		bool move(dirs to_where, float gear);
-
-		void Release();
-
-		static TILE* create(tiles type, float where_x, float where_y, dirs dir);
-	};
-
-	class JUNGLE_API PLATFORM :public PROTON
-	{
-	private:
-		float _speed{ 1.0f };
-
-		PLATFORM(platforms _type, float _where_x, float _where_y, dirs _dir);
-
-	public:
-		platforms type{ platforms::flat_platform1 };
-		dirs dir = dirs::stop;
-
-		bool move(dirs to_where, float gear);
-
-		void Release();
-
-		static PLATFORM* create(platforms type, float where_x, float where_y, dirs dir);
-	};
-
-	class JUNGLE_API HERO :public PROTON
-	{
-	private:
-		float _speed = 0.3f;
-
-		float jump_sx{ 0 };
-		float jump_ex{ 0 };
-		float jump_sy{ 0 };
-		float jump_ey{ 0 };
-
-		int frame{ 0 };
-		int frame_delay{ 15 };
-		
-		HERO(float _sx, float _sy);
-
-	public:
-		dirs dir{ dirs::stop };
-		char state{ RUN };
-		
-		bool in_jump = false;
-		bool on_platform{ false };
-
-		FRECT platform{};
-
-		int lifes{ 100 };
-		int strenght{ 50 };
-		int shield{ 5 };
-
-		void move(float gear);
-		void jump(float gear);
-		void set_platform(FRECT current_platform);
-		void fall(float gear);
-		
-		int get_frame();
-
-		void Release();
-
-		static HERO* create(float sx, float sy);
-	};
-
-	class JUNGLE_API SHOT :public PROTON
-	{
-	private:
-		float move_sx{ 0 };
-		float move_sy{ 0 };
-		float move_ex{ 0 };
-		float move_ey{ 0 };
-		float slope{ 0 };
-		float intercept{ 0 };
-
-		float _speed{ 0 };
-
-		bool ver_dir{ 0 };
-		bool hor_dir{ 0 };
-
-		bool set_path(float _end_x, float _end_y);
-
-		SHOT(shots _type, float _start_x, float _start_y, float _target_x, float _target_y);
-
-	public:
-		shots type{ shots::tomahawk };
-		dirs dir{ dirs::stop };
-
-		int damage{ 0 };
-
-		bool move(float gear);
-		static SHOT* create(shots type, float start_x, float start_y, float target_x, float target_y);
-		void Release();
-	};
-
-	class JUNGLE_API EVIL :public PROTON
-	{
-	private:
-		float move_sx{ 0 };
-		float move_sy{ 0 };
-		float move_ex{ 0 };
-		float move_ey{ 0 };
-		float slope{ 0 };
-		float intercept{ 0 };
-
-		float jump_sx{ 0 };
-		float jump_ex{ 0 };
-		float jump_sy{ 0 };
-		float jump_ey{ 0 };
-
-		float _speed{ 0 };
-
-		bool ver_dir{ 0 };
-		bool hor_dir{ 0 };
-
-		int max_frames{ 0 };
-		int frame_delay{ 0 };
-		int max_frame_delay{ 0 };
-		int frame{ 0 };
-
-		RANDIT _rand{};
-		
-		bool set_path(float _end_x, float _end_y);
-
-		EVIL(evils _type, float _sx, float _sy);
-
-	public:
-		evils type{ evils::flyer };
-		dirs dir{ dirs::stop };
-		char state{ RUN };
-
-		int lifes{ 0 };
-		int damage{ 0 };
-		bool in_jump{ false };
-		bool on_platform{ false };
-
-		FRECT platform{};
-
-
-		bool move(float gear);
-		void jump(float gear);
-		void set_platform(FRECT current_platform);
-		void fall(float gear);
-		
-		int get_frame();
-
-		void Release();
-
-		static EVIL* create(evils type, float start_x, float start_y);
-	};
-	
 	/// TEMPLATES ***************************************
-	
+
 	template<typename T> class BAG
 	{
 	private:
@@ -294,7 +72,7 @@ namespace dll
 
 			m_size = other.m_size;
 			m_ptr = reinterpret_cast<T*>(calloc(m_size, sizeof(T));
-			
+
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			else if (m_size > 0)
 			{
@@ -305,10 +83,10 @@ namespace dll
 		BAG(BAG&& other)
 		{
 			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
-			
+
 			m_size = other.m_size;
 			m_ptr = other.m_ptr;
-		
+
 			other.m_ptr = nullptr;
 		}
 
@@ -321,7 +99,7 @@ namespace dll
 		{
 			if (!other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
 			if (m_ptr == other.m_ptr)throw EXCEPTION(BAG_BAD_ARG);
-			
+
 			free(m_ptr);
 
 			m_size = other.m_size;
@@ -365,7 +143,7 @@ namespace dll
 			if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 			if (!has_elements)throw_EXCEPTION(BAG_NO_ELEMENTS);
 
-			return m_ptr[next_pos-1];
+			return m_ptr[next_pos - 1];
 		}
 
 		size_t capacity()const
@@ -653,7 +431,230 @@ namespace dll
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
+	
+	class JUNGLE_API RANDIT
+	{
+	private:
+		std::mt19937* twister{ nullptr };
 
+	public:
+		RANDIT();
+		~RANDIT();
+
+		int operator()(int min, int max);
+		float operator()(float min, float max);
+	};
+
+	class JUNGLE_API EXCEPTION
+	{
+	private:
+		int _err_code{ 0 };
+
+	public:
+		EXCEPTION(int which_err);
+
+		const char* get() const;
+	};
+
+	class JUNGLE_API PROTON
+	{
+	protected:
+		float _width{ 0 };
+		float _height{ 0 };
+
+		bool _in_heap = false;
+
+	public:
+		FPOINT start{};
+		FPOINT end{};
+		FPOINT center{};
+		float x_rad{ 0 };
+		float y_rad{ 0 };
+
+		PROTON();
+		PROTON(float _sx, float _sy);
+		PROTON(float _sx, float _sy, float _s_width, float _s_height);
+
+		virtual ~PROTON() {};
+
+		float get_width() const;
+		float get_height() const;
+
+		void set_width(float new_width);
+		void set_height(float new_height);
+		void set_edges();
+		void new_dims(float new_width, float new_height);
+
+		bool in_heap() const;
+
+		static PROTON* create(float sx, float sy, float s_width, float s_height);
+	};
+
+	class JUNGLE_API TILE :public PROTON
+	{
+	private:
+		float _speed{ 1.0f };
+
+		TILE(tiles _type, float _where_x, float _where_y, dirs _dir);
+
+	public:
+		tiles type{ tiles::dirt };
+		dirs dir = dirs::stop;
+
+		bool move(dirs to_where, float gear);
+
+		void Release();
+
+		static TILE* create(tiles type, float where_x, float where_y, dirs dir);
+	};
+
+	class JUNGLE_API PLATFORM :public PROTON
+	{
+	private:
+		float _speed{ 1.0f };
+
+		PLATFORM(platforms _type, float _where_x, float _where_y, dirs _dir);
+
+	public:
+		platforms type{ platforms::flat_platform1 };
+		dirs dir = dirs::stop;
+
+		bool move(dirs to_where, float gear);
+
+		void Release();
+
+		static PLATFORM* create(platforms type, float where_x, float where_y, dirs dir);
+	};
+
+	class JUNGLE_API HERO :public PROTON
+	{
+	private:
+		float _speed = 0.3f;
+
+		float jump_sx{ 0 };
+		float jump_ex{ 0 };
+		float jump_sy{ 0 };
+		float jump_ey{ 0 };
+
+		int frame{ 0 };
+		int frame_delay{ 15 };
+		
+		HERO(float _sx, float _sy);
+
+	public:
+		dirs dir{ dirs::stop };
+		char state{ RUN };
+		
+		bool in_jump = false;
+		bool on_platform{ false };
+
+		FRECT platform{};
+
+		int lifes{ 100 };
+		int strenght{ 50 };
+		int shield{ 5 };
+
+		void move(float gear);
+		void jump(float gear);
+		void set_platform(FRECT current_platform);
+		void fall(float gear);
+		
+		int get_frame();
+
+		void Release();
+
+		static HERO* create(float sx, float sy);
+	};
+
+	class JUNGLE_API SHOT :public PROTON
+	{
+	private:
+		float move_sx{ 0 };
+		float move_sy{ 0 };
+		float move_ex{ 0 };
+		float move_ey{ 0 };
+		float slope{ 0 };
+		float intercept{ 0 };
+
+		float _speed{ 0 };
+
+		bool ver_dir{ 0 };
+		bool hor_dir{ 0 };
+
+		bool set_path(float _end_x, float _end_y);
+
+		SHOT(shots _type, float _start_x, float _start_y, float _target_x, float _target_y);
+
+	public:
+		shots type{ shots::tomahawk };
+		dirs dir{ dirs::stop };
+
+		int damage{ 0 };
+
+		bool move(float gear);
+		static SHOT* create(shots type, float start_x, float start_y, float target_x, float target_y);
+		void Release();
+	};
+
+	class JUNGLE_API EVIL :public PROTON
+	{
+	private:
+		float move_sx{ 0 };
+		float move_sy{ 0 };
+		float move_ex{ 0 };
+		float move_ey{ 0 };
+		float slope{ 0 };
+		float intercept{ 0 };
+
+		float jump_sx{ 0 };
+		float jump_ex{ 0 };
+		float jump_sy{ 0 };
+		float jump_ey{ 0 };
+
+		float _speed{ 0 };
+
+		bool ver_dir{ 0 };
+		bool hor_dir{ 0 };
+
+		int max_frames{ 0 };
+		int frame_delay{ 0 };
+		int max_frame_delay{ 0 };
+		int frame{ 0 };
+
+		RANDIT _rand{};
+		
+		bool set_path(float _end_x, float _end_y);
+
+		EVIL(evils _type, float _sx, float _sy);
+
+	public:
+		evils type{ evils::flyer };
+		dirs dir{ dirs::stop };
+		char state{ RUN };
+
+		int lifes{ 0 };
+		int damage{ 0 };
+		bool in_jump{ false };
+		bool on_platform{ false };
+
+		FRECT platform{};
+
+
+		bool move(float gear);
+		void jump(float gear);
+		void set_platform(FRECT current_platform);
+		void fall(float gear);
+		
+		int get_frame();
+
+		void Release();
+
+		static EVIL* create(evils type, float start_x, float start_y);
+
+		friend char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks);
+	};
+	
+	
 
 	// FUNCTIONS *************************************
 
@@ -664,4 +665,6 @@ namespace dll
 	JUNGLE_API bool Intersect(FRECT first, FRECT second);
 
 	JUNGLE_API bool Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, float y_rad1, float y_rad2);
+
+	JUNGLE_API char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks);
 }
