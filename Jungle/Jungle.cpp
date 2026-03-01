@@ -325,6 +325,7 @@ void dll::HERO::jump(float gear)
 		jump_ey = start.y - 100.0f;
 		
 		state = JUMP_UP;
+		on_platform = false;
 
 		if (dir == dirs::left)jump_ex = jump_sx - 20.0f;
 		else jump_ex = jump_sx + 20.0f;
@@ -380,6 +381,12 @@ void dll::HERO::jump(float gear)
 				set_edges();
 				if (start.y >= jump_ey)
 				{
+					if (end.y < ground)
+					{
+						in_jump = false;
+						state = FALLING;
+						break;
+					}
 					state = RUN;
 					in_jump = false;
 
@@ -394,6 +401,12 @@ void dll::HERO::jump(float gear)
 				set_edges();
 				if (start.y >= jump_ey)
 				{
+					if (end.y < ground)
+					{
+						in_jump = false;
+						state = FALLING;
+						break;
+					}
 					state = RUN;
 					in_jump = false;
 
@@ -401,6 +414,13 @@ void dll::HERO::jump(float gear)
 					set_edges();
 				}
 				break;
+			}
+
+			if (end.y > ground)
+			{
+				start.y = ground - _height;
+				set_edges();
+				on_platform = false;
 			}
 		}
 	}
@@ -775,6 +795,7 @@ void dll::EVIL::jump(float gear)
 		jump_ey = start.y - 100.0f;
 
 		state = JUMP_UP;
+		on_platform = false;
 
 		if (dir == dirs::left)jump_ex = jump_sx - 20.0f;
 		else jump_ex = jump_sx + 20.0f;
@@ -830,6 +851,14 @@ void dll::EVIL::jump(float gear)
 				set_edges();
 				if (start.y >= jump_ey)
 				{
+					if (end.y < ground)
+					{
+						in_jump = false;
+						on_platform = false;
+						state = FALLING;
+						break;
+					}
+
 					state = RUN;
 					in_jump = false;
 
@@ -844,6 +873,13 @@ void dll::EVIL::jump(float gear)
 				set_edges();
 				if (start.y >= jump_ey)
 				{
+					if (end.y < ground)
+					{
+						in_jump = false;
+						on_platform = false;
+						state = FALLING;
+						break;
+					}
 					state = RUN;
 					in_jump = false;
 
@@ -851,6 +887,12 @@ void dll::EVIL::jump(float gear)
 					set_edges();
 				}
 				break;
+			}
+			if (end.y > ground)
+			{
+				start.y = ground - _height;
+				set_edges();
+				on_platform = false;
 			}
 		}
 	}
@@ -997,7 +1039,8 @@ char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks)
 	}
 	else
 	{
-		if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
+		if (!evil.on_platform && evil.end.y < ground)ret = FALLING;
+		else if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
 			&& evil._rand(0, 10) == 6)ret = SHOOT;
 		else if (!tomahawks.empty())
 		{
