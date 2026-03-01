@@ -401,6 +401,39 @@ void dll::HERO::jump(float gear)
 		}
 	}
 }
+void dll::HERO::set_platform(FRECT current_platform)
+{
+	platform = current_platform;
+	start.y = platform.up - _height;
+	set_edges();
+
+	on_platform = true;
+	state = STOP;
+	dir = dirs::stop;
+}
+void dll::HERO::fall(float gear)
+{
+	if (state != FALLING)return;
+
+	float my_speed = _speed + gear / 10.0f;
+
+	start.y -= my_speed;
+	set_edges();
+	if (end.y >= ground)
+	{
+		start.y = ground - _height;
+		set_edges();
+
+		on_platform = false;
+		platform.left = 0;
+		platform.right = 0;
+		platform.up = 0;
+		platform.down = 0;
+		dir = dirs::stop;
+		state = STOP;
+	}
+}
+
 int dll::HERO::get_frame()
 {
 	--frame_delay;
@@ -412,7 +445,6 @@ int dll::HERO::get_frame()
 	}
 	return frame;
 }
-
 void dll::HERO::Release()
 {
 	delete this;
@@ -595,6 +627,9 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 0.8f;
 		damage = 5;
 		lifes = 80;
+		if (_rand(0, 2) == 0)set_path(start.x - 100.0f, sky);
+		else if (_rand(0, 1) == 1)set_path(start.x - 100.0f, ground);
+		else set_path(-scr_width, start.y);
 		break;
 
 	case evils::mushroom:
@@ -627,10 +662,141 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 	}
 
 	max_frame_delay = frame_delay;
+
+	dir = dirs::left;
 }
 
-bool move(float gear);
+bool dll::EVIL::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (type != evils::flyer)
+	{
+		switch (dir)
+		{
+		case dirs::left:
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width / 2.0f)return false;
+			break;
+
+		case dirs::right:
+			start.x += my_speed;
+			set_edges();
+			if (start.x >= scr_width + scr_width / 2.0f)return false;
+			break;
+		}
+	}
+	else
+	{
+		switch (dir)
+		{
+		case dirs::left:
+			if (hor_dir)
+			{
+				start.x -= my_speed;
+				set_edges();
+				if (end.x <= -scr_width / 2.0f)return false;
+			}
+			else if (ver_dir)
+			{
+				if (move_sy >= move_ey)
+				{
+					start.y -= my_speed;
+					set_edges();
+					if (end.y <= sky)return false;
+				}
+				else
+				{
+					start.y += my_speed;
+					set_edges();
+					if (start.y >= ground)return false;
+				}
+			}
+			else
+			{
+				start.x -= my_speed;
+				start.y = start.x * slope + intercept;
+				if (start.y <= sky)set_path(start.x - 100.0f, ground);
+				if (end.y >= ground)set_path(start.x - 100.0f, sky);
+			}
+			break;
+
+		case dirs::right:
+			if (hor_dir)
+			{
+				start.x += my_speed;
+				set_edges();
+				if (start.x >= scr_width + scr_width / 2.0f)return false;
+			}
+			else if (ver_dir)
+			{
+				if (move_sy >= move_ey)
+				{
+					start.y -= my_speed;
+					set_edges();
+					if (end.y <= sky)return false;
+				}
+				else
+				{
+					start.y += my_speed;
+					set_edges();
+					if (start.y >= ground)return false;
+				}
+			}
+			else
+			{
+				start.x += my_speed;
+				start.y = start.x * slope + intercept;
+				if (start.y <= sky)set_path(start.x + 100.0f, ground);
+				if (end.y >= ground)set_path(start.x + 100.0f, sky);
+			}
+			break;
+
+
+
+
+
+		}
+	}
+
+	return false;
+}
 void jump(float gear);
+void dll::EVIL::set_platform(FRECT current_platform)
+{
+	platform = current_platform;
+	start.y = platform.up - _height;
+	set_edges();
+
+	on_platform = true;
+	state = STOP;
+	dir = dirs::stop;
+}
+void dll::EVIL::fall(float gear)
+{
+	if (type == evils::flyer)return;
+
+	if (state != FALLING)return;
+
+	float my_speed = _speed + gear / 10.0f;
+
+	start.y -= my_speed;
+	set_edges();
+	if (end.y >= ground)
+	{
+		start.y = ground - _height;
+		set_edges();
+
+		on_platform = false;
+		platform.left = 0;
+		platform.right = 0;
+		platform.up = 0;
+		platform.down = 0;
+		dir = dirs::stop;
+		state = STOP;
+	}
+}
 
 int dll::EVIL::get_frame()
 {

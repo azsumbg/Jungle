@@ -27,6 +27,8 @@ constexpr char JUMP_DOWN{ 0b00000100 };
 constexpr char JUMP_FLY_UP{ 0b00001000 };
 constexpr char JUMP_FLY_DOWN{ 0b00010000 };
 constexpr char JUMP_FLY_STRAIGHT{ 0b00010000 };
+constexpr char FALLING{ 0b00100000 };
+constexpr char STOP{ 0b01000000 };
 
 enum class dirs { right = 0, left = 1, up = 2, down = 3, stop = 4 };
 enum class tiles {
@@ -165,7 +167,11 @@ namespace dll
 	public:
 		dirs dir{ dirs::stop };
 		char state{ RUN };
+		
 		bool in_jump = false;
+		bool on_platform{ false };
+
+		FRECT platform{};
 
 		int lifes{ 100 };
 		int strenght{ 50 };
@@ -173,6 +179,9 @@ namespace dll
 
 		void move(float gear);
 		void jump(float gear);
+		void set_platform(FRECT current_platform);
+		void fall(float gear);
+		
 		int get_frame();
 
 		void Release();
@@ -229,6 +238,8 @@ namespace dll
 		int frame_delay{ 0 };
 		int max_frame_delay{ 0 };
 		int frame{ 0 };
+
+		RANDIT _rand{};
 		
 		bool set_path(float _end_x, float _end_y);
 
@@ -242,9 +253,16 @@ namespace dll
 		int lifes{ 0 };
 		int damage{ 0 };
 		bool in_jump{ false };
+		bool on_platform{ false };
+
+		FRECT platform{};
+
 
 		bool move(float gear);
 		void jump(float gear);
+		void set_platform(FRECT current_platform);
+		void fall(float gear);
+		
 		int get_frame();
 
 		void Release();
