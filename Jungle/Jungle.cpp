@@ -251,6 +251,7 @@ dll::PLATFORM::PLATFORM(platforms _type, float _where_x, float _where_y, dirs _d
 bool dll::PLATFORM::move(dirs to_where, float gear)
 {
 	float my_speed = _speed + gear / 5.0f;
+	dir = to_where;
 
 	switch (dir)
 	{
@@ -1090,7 +1091,7 @@ void dll::Sort(BAG<FPOINT>& bag, FPOINT criterion, bool ascending)
 bool dll::Intersect(FRECT first, FRECT second)
 {
 	if (!(first.left > second.right || first.right < second.left
-		|| first.up>second.down || first.down < second.up))return true;
+		|| first.up > second.down || first.down < second.up))return true;
 	return false;
 }
 bool dll::Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, float y_rad1, float y_rad2)
