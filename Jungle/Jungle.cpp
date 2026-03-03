@@ -479,7 +479,7 @@ void dll::HERO::fall(float gear)
 
 	float my_speed = _speed + gear;
 
-	start.y -= my_speed;
+	start.y += my_speed;
 	set_edges();
 	if (end.y >= ground)
 	{
