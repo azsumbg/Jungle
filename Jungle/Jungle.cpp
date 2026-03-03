@@ -189,19 +189,20 @@ dll::TILE::TILE(tiles _type, float _where_x, float _where_y, dirs _dir) :PROTON(
 bool dll::TILE::move(dirs to_where, float gear)
 {
 	float my_speed = _speed + gear / 5.0f;
+	dir = to_where;
 
 	switch (dir)
 	{
 	case dirs::left:
 		start.x -= my_speed;
 		set_edges();
-		if (end.x - my_speed <= -scr_width)return false;
+		if (end.x <= -scr_width)return false;
 		break;
 
 	case dirs::right:
-		start.x -= my_speed;
+		start.x += my_speed;
 		set_edges();
-		if (start.x - my_speed >= 2.0f * scr_width)return false;
+		if (start.x >= 2.0f * scr_width)return false;
 		break;
 	}
 
@@ -326,6 +327,7 @@ void dll::HERO::jump(float gear)
 		
 		state = JUMP_UP;
 		on_platform = false;
+		in_jump = true;
 
 		if (dir == dirs::left)jump_ex = jump_sx - 20.0f;
 		else jump_ex = jump_sx + 20.0f;
@@ -352,7 +354,6 @@ void dll::HERO::jump(float gear)
 				}
 				break;
 
-
 			case dirs::left:
 				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
 				if (start.y - my_speed >= jump_ey)start.y -= my_speed;
@@ -367,6 +368,22 @@ void dll::HERO::jump(float gear)
 					jump_sx = start.x;
 					jump_sy = start.y;
 
+				}
+				break;
+
+			case dirs::stop:
+				if (end.x + my_speed >= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
+				if (start.y - my_speed >= jump_ey)start.y -= my_speed;
+				set_edges();
+				if (start.y < jump_ey)
+				{
+					state = JUMP_DOWN;
+
+					jump_ex = jump_sx + 40.0f;
+					jump_ey = jump_sy;
+
+					jump_sx = start.x;
+					jump_sy = start.y;
 				}
 				break;
 			}
@@ -421,6 +438,7 @@ void dll::HERO::jump(float gear)
 				start.y = ground - _height;
 				set_edges();
 				on_platform = false;
+				in_jump = false;
 			}
 		}
 	}
