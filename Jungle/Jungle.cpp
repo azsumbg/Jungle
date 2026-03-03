@@ -293,7 +293,7 @@ dll::HERO::HERO(float _sx, float _sy) :PROTON(_sx, _sy, 45.0f, 50.0f) {};
 	
 void dll::HERO::move(float gear)
 {
-	float my_speed = _speed + gear / 5.0f;
+	float my_speed = _speed - gear / 15.0f;
 	
 	state = RUN;
 
@@ -342,8 +342,8 @@ void dll::HERO::jump(float gear)
 		on_platform = false;
 		in_jump = true;
 
-		if (dir == dirs::left)jump_ex = jump_sx - 20.0f;
-		else jump_ex = jump_sx + 20.0f;
+		if (dir == dirs::left)jump_ex = jump_sx - 40.0f;
+		else jump_ex = end.x + 40.0f;
 	}
 	else
 	{
@@ -352,14 +352,14 @@ void dll::HERO::jump(float gear)
 			switch (dir)
 			{
 			case dirs::right:
-				if (end.x + my_speed <= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
-				if (start.y > jump_ey)start.y -= my_speed;
+				if (end.x <= jump_ex && end.x <= scr_width)start.x += 2.0f * my_speed;
+				if (start.y > jump_ey)start.y -= 2.0f * my_speed;
 				set_edges();
 				if (start.y <= jump_ey)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx + 40.0f;
+					jump_ex = jump_sx + 60.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -368,14 +368,14 @@ void dll::HERO::jump(float gear)
 				break;
 
 			case dirs::left:
-				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
-				if (start.y > jump_ey)start.y -= my_speed;
+				if (start.x >= jump_ex && start.x >= 0)start.x -= 2.0f * my_speed;
+				if (start.y > jump_ey)start.y -= 2.0f * my_speed;
 				set_edges();
 				if (start.y <= jump_ey)
 				{
 					state = JUMP_DOWN;
 					
-					jump_ex = jump_sx - 40.0f;
+					jump_ex = jump_sx - 60.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -385,14 +385,14 @@ void dll::HERO::jump(float gear)
 				break;
 
 			case dirs::stop:
-				if (end.x + my_speed <= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
-				if (start.y > jump_ey)start.y -= my_speed;
+				if (end.x <= jump_ex && end.x <= scr_width)start.x += 2.0f * my_speed;
+				if (start.y > jump_ey)start.y -= 2.0f * my_speed;
 				set_edges();
 				if (start.y <= jump_ey)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx + 40.0f;
+					jump_ex = jump_sx + 60.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -406,8 +406,8 @@ void dll::HERO::jump(float gear)
 			switch (dir)
 			{
 			case dirs::right:
-				if (end.x + my_speed <= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
-				if (start.y < jump_ey)start.y += my_speed;
+				if (end.x <= jump_ex && end.x <= scr_width)start.x += 2.0f * my_speed;
+				if (start.y < jump_ey)start.y += 2.0f * my_speed;
 				set_edges();
 				if (start.y >= jump_ey)
 				{
@@ -426,7 +426,7 @@ void dll::HERO::jump(float gear)
 				break;
 
 			case dirs::left:
-				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
+				if (start.x >= jump_ex && start.x >= 0)start.x -= 2.0f * my_speed;
 				if (start.y < jump_ey)start.y += my_speed;
 				set_edges();
 				if (start.y >= jump_ey)
@@ -446,7 +446,7 @@ void dll::HERO::jump(float gear)
 				break;
 
 			case dirs::stop:
-				if (end.x + my_speed <= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
+				if (end.x <= jump_ex && end.x <= scr_width)start.x += 2.0f * my_speed;
 				if (start.y < jump_ey)start.y += my_speed;
 				set_edges();
 				if (start.y >= jump_ey)
@@ -493,7 +493,7 @@ void dll::HERO::fall(float gear)
 
 	float my_speed = _speed + gear;
 
-	start.y += my_speed;
+	start.y += 2.0f * my_speed;
 	set_edges();
 	if (end.y >= ground)
 	{
@@ -838,7 +838,9 @@ bool dll::EVIL::move(float gear)
 }
 void dll::EVIL::jump(float gear)
 {
-	float my_speed = _speed + gear;
+	if (type == evils::flyer)return; 
+
+	float my_speed = 2.0f * (_speed + gear);
 
 	if (!in_jump)
 	{
@@ -998,7 +1000,7 @@ void dll::EVIL::fall(float gear)
 {
 	if (state != FALLING)return;
 
-	float my_speed = _speed + gear;
+	float my_speed = 2.0f * (_speed + gear);
 
 	start.y += my_speed;
 	set_edges();
