@@ -293,7 +293,7 @@ dll::HERO::HERO(float _sx, float _sy) :PROTON(_sx, _sy, 45.0f, 50.0f) {};
 	
 void dll::HERO::move(float gear)
 {
-	float my_speed = _speed + gear / 10.0f;
+	float my_speed = _speed + gear / 5.0f;
 	
 	state = RUN;
 
@@ -302,8 +302,8 @@ void dll::HERO::move(float gear)
 	case dirs::left:
 		if (on_platform)
 		{
-			platform.left += my_speed;
-			platform.right += my_speed;
+			platform.left += 1.0f + gear / 5.0f;
+			platform.right += 1.0f + gear / 5.0f;
 		}
 		if (start.x - my_speed >= 0)
 		{
@@ -315,8 +315,8 @@ void dll::HERO::move(float gear)
 	case dirs::right:
 		if (on_platform)
 		{
-			platform.left -= my_speed;
-			platform.right -= my_speed;
+			platform.left -= 1.0f + gear / 5.0f;
+			platform.right -= 1.0f + gear / 5.0f;
 		}
 		if (end.x + my_speed <= scr_width)
 		{
@@ -324,6 +324,8 @@ void dll::HERO::move(float gear)
 			set_edges();
 		}
 		break;
+
+	default: dir = dirs::stop;
 	}
 }
 void dll::HERO::jump(float gear)
