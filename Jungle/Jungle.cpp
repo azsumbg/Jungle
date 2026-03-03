@@ -262,7 +262,7 @@ bool dll::PLATFORM::move(dirs to_where, float gear)
 		break;
 
 	case dirs::right:
-		start.x -= my_speed;
+		start.x += my_speed;
 		set_edges();
 		if (start.x - my_speed >= 2.0f * scr_width)return false;
 		break;
