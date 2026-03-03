@@ -394,7 +394,7 @@ void dll::HERO::jump(float gear)
 			{
 			case dirs::right:
 				if (end.x + my_speed <= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
-				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				if (start.y < jump_ey)start.y += my_speed;
 				set_edges();
 				if (start.y >= jump_ey)
 				{
@@ -414,7 +414,7 @@ void dll::HERO::jump(float gear)
 
 			case dirs::left:
 				if (start.x - my_speed >= jump_ex && start.x - my_speed >= 0)start.x -= my_speed;
-				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				if (start.y < jump_ey)start.y += my_speed;
 				set_edges();
 				if (start.y >= jump_ey)
 				{
@@ -434,7 +434,7 @@ void dll::HERO::jump(float gear)
 
 			case dirs::stop:
 				if (end.x + my_speed <= jump_ex && end.x + my_speed <= scr_width)start.x += my_speed;
-				if (start.y + my_speed < jump_ey)start.y += my_speed;
+				if (start.y < jump_ey)start.y += my_speed;
 				set_edges();
 				if (start.y >= jump_ey)
 				{
