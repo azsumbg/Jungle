@@ -749,7 +749,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 
 bool dll::EVIL::move(float gear)
 {
-	float my_speed = _speed + gear / 10.0f;
+	float my_speed = _speed + gear / 2.0f;
 
 	if (type != evils::flyer)
 	{
@@ -796,20 +796,11 @@ bool dll::EVIL::move(float gear)
 			}
 			else
 			{
-				if (dir == dirs::left)
-				{
-					start.x -= my_speed;
-					start.y = start.x * slope + intercept;
-					if (start.y <= sky)set_path(start.x - 100.0f, ground);
-					if (end.y >= ground)set_path(start.x - 100.0f, sky);
-				}
-				else
-				{
-					start.x += my_speed;
-					start.y = start.x * slope + intercept;
-					if (start.y <= sky)set_path(start.x + 100.0f, ground);
-					if (end.y >= ground)set_path(start.x + 100.0f, sky);
-				}
+				start.x -= my_speed;
+				start.y = start.x * slope + intercept;
+				set_edges();
+				if (start.y <= sky)set_path(start.x - 100.0f, ground);
+				if (end.y >= ground)set_path(start.x - 100.0f, sky);
 			}
 			break;
 
@@ -839,6 +830,7 @@ bool dll::EVIL::move(float gear)
 			{
 				start.x += my_speed;
 				start.y = start.x * slope + intercept;
+				set_edges();
 				if (start.y <= sky)set_path(start.x + 100.0f, ground);
 				if (end.y >= ground)set_path(start.x + 100.0f, sky);
 			}
@@ -867,8 +859,8 @@ void dll::EVIL::jump(float gear)
 		on_platform = false;
 		in_jump = true;
 
-		if (dir == dirs::left)jump_ex = jump_sx - 40.0f;
-		else jump_ex = end.x + 40.0f;
+		if (dir == dirs::left)jump_ex = jump_sx - 60.0f;
+		else jump_ex = end.x + 60.0f;
 	}
 	else
 	{
@@ -1008,8 +1000,7 @@ void dll::EVIL::set_platform(FRECT current_platform)
 	set_edges();
 
 	on_platform = true;
-	state = STOP;
-	dir = dirs::stop;
+	state = RUN;
 }
 void dll::EVIL::fall(float gear)
 {
@@ -1143,29 +1134,31 @@ bool dll::Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, flo
 
 char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, BAG<FPOINT>& obstacles)
 {
-	char ret = RUN;
+	char ret = evil.state;
 
-	if (!obstacles.empty())Sort(obstacles, evil.center);
+	if (!evil.in_jump)
+	{
+		if (!obstacles.empty())Sort(obstacles, evil.center);
 
-	if (evil.type == evils::flyer)
-	{
-		if (abs(hero_center.x - evil.center.x) >= 200.0f && abs(hero_center.y - evil.center.y) >= 200.0f
-			&& evil._rand(0, 10) == 6)ret = SHOOT;
-	}
-	else
-	{
-		if (!evil.on_platform && evil.end.y < ground)ret = FALLING; 
-		else if (!obstacles.empty())
+		if (evil.type == evils::flyer)
 		{
-			if (Distance(evil.center, obstacles[0]) <= 35)ret = JUMP_UP;
+			if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f)ret = SHOOT;
 		}
-		else if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
-			&& evil._rand(0, 10) == 6)ret = SHOOT;
-		else if (!tomahawks.empty())
+		else
 		{
-			Sort(tomahawks, evil.center);
-			if (abs(tomahawks[0].x - evil.center.x) >= 100.0f && abs(tomahawks[0].y - evil.center.y) <= 200.0f
-				&& !evil.in_jump)ret = JUMP_UP;
+			if (!evil.on_platform && evil.end.y < ground)ret = FALLING;
+			else if (!obstacles.empty())
+			{
+				if (!evil.on_platform && abs(obstacles[0].x - evil.center.x) <= 40.0f)ret = JUMP_UP;
+			}
+			else if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
+				&& evil._rand(0, 10) == 6)ret = SHOOT;
+			else if (!tomahawks.empty())
+			{
+				Sort(tomahawks, evil.center);
+				if (abs(tomahawks[0].x - evil.center.x) >= 100.0f && abs(tomahawks[0].y - evil.center.y) <= 200.0f
+					&& !evil.in_jump)ret = JUMP_UP;
+			}
 		}
 	}
 
