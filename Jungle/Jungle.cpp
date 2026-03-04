@@ -703,6 +703,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 0.8f;
 		damage = 5;
 		lifes = 80;
+		attack_delay = 80;
 		if (_rand(0, 2) == 0)set_path(start.x - 100.0f, sky);
 		else if (_rand(0, 1) == 1)set_path(start.x - 100.0f, ground);
 		else set_path(-scr_width, start.y);
@@ -715,6 +716,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 0.7f;
 		damage = 8;
 		lifes = 60;
+		attack_delay = 90;
 		break;
 
 	case evils::snail:
@@ -724,6 +726,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 0.5f;
 		damage = 10;
 		lifes = 90;
+		attack_delay = 100;
 		break;
 
 	case evils::octopus:
@@ -733,11 +736,13 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 0.5f;
 		damage = 12;
 		lifes = 100;
+		attack_delay = 120;
 		break;
 
 	}
 
 	max_frame_delay = frame_delay;
+	max_attack_delay = attack_delay;
 
 	dir = dirs::left;
 }
@@ -839,8 +844,6 @@ bool dll::EVIL::move(float gear)
 void dll::EVIL::jump(float gear)
 {
 	if (type == evils::flyer)return; 
-
-	float my_speed = _speed + gear;
 
 	float my_speed = _speed + gear;
 
@@ -1033,6 +1036,17 @@ int dll::EVIL::get_frame()
 
 	return frame;
 }
+int dll::EVIL::attack()
+{
+	--attack_delay;
+	if (attack_delay <= 0)
+	{
+		attack_delay = max_attack_delay;
+		return damage;
+	}
+
+	return 0;
+}
 
 void dll::EVIL::Release()
 {
@@ -1117,9 +1131,11 @@ bool dll::Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, flo
 	return false;
 }
 
-char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks)
+char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, BAG<FPOINT>& obstacles)
 {
 	char ret = RUN;
+
+	if (!obstacles.empty())Sort(obstacles, evil.center);
 
 	if (evil.type == evils::flyer)
 	{
@@ -1128,7 +1144,11 @@ char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks)
 	}
 	else
 	{
-		if (!evil.on_platform && evil.end.y < ground)ret = FALLING;
+		if (!evil.on_platform && evil.end.y < ground)ret = FALLING; 
+		else if (!obstacles.empty())
+		{
+			if (Distance(evil.center, obstacles[0]) <= 10)ret = JUMP_UP;
+		}
 		else if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
 			&& evil._rand(0, 10) == 6)ret = SHOOT;
 		else if (!tomahawks.empty())
