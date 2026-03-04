@@ -700,7 +700,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		new_dims(40.0f, 43.0f);
 		max_frames = 15;
 		frame_delay = 5;
-		_speed = 0.8f;
+		_speed = 1.3f;
 		damage = 5;
 		lifes = 80;
 		attack_delay = 80;
@@ -713,7 +713,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		new_dims(40.0f, 41.0f);
 		max_frames = 36;
 		frame_delay = 2;
-		_speed = 0.7f;
+		_speed = 1.2f;
 		damage = 8;
 		lifes = 60;
 		attack_delay = 90;
@@ -723,7 +723,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		new_dims(45.0f, 45.0f);
 		max_frames = 31;
 		frame_delay = 2;
-		_speed = 0.5f;
+		_speed = 1.1f;
 		damage = 10;
 		lifes = 90;
 		attack_delay = 100;
@@ -733,7 +733,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		new_dims(40.0f, 51.0f);
 		max_frames = 35;
 		frame_delay = 2;
-		_speed = 0.5f;
+		_speed = 1.1f;
 		damage = 12;
 		lifes = 100;
 		attack_delay = 120;
@@ -796,10 +796,20 @@ bool dll::EVIL::move(float gear)
 			}
 			else
 			{
-				start.x -= my_speed;
-				start.y = start.x * slope + intercept;
-				if (start.y <= sky)set_path(start.x - 100.0f, ground);
-				if (end.y >= ground)set_path(start.x - 100.0f, sky);
+				if (dir == dirs::left)
+				{
+					start.x -= my_speed;
+					start.y = start.x * slope + intercept;
+					if (start.y <= sky)set_path(start.x - 100.0f, ground);
+					if (end.y >= ground)set_path(start.x - 100.0f, sky);
+				}
+				else
+				{
+					start.x += my_speed;
+					start.y = start.x * slope + intercept;
+					if (start.y <= sky)set_path(start.x + 100.0f, ground);
+					if (end.y >= ground)set_path(start.x + 100.0f, sky);
+				}
 			}
 			break;
 
@@ -1147,7 +1157,7 @@ char dll::AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, B
 		if (!evil.on_platform && evil.end.y < ground)ret = FALLING; 
 		else if (!obstacles.empty())
 		{
-			if (Distance(evil.center, obstacles[0]) <= 10)ret = JUMP_UP;
+			if (Distance(evil.center, obstacles[0]) <= 35)ret = JUMP_UP;
 		}
 		else if (abs(hero_center.x - evil.center.x) <= 200.0f && abs(hero_center.y - evil.center.y) <= 200.0f
 			&& evil._rand(0, 10) == 6)ret = SHOOT;

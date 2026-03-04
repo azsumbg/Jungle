@@ -658,7 +658,7 @@ namespace dll
 
 		static EVIL* create(evils type, float start_x, float start_y);
 
-		friend char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, BAG<FPOINT>& obstacles);
+		friend char JUNGLE_API AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, BAG<FPOINT>& obstacles);
 	};
 	
 	// FUNCTIONS *************************************
@@ -671,5 +671,5 @@ namespace dll
 
 	JUNGLE_API bool Intersect(FPOINT first, FPOINT second, float x_rad1, float x_rad2, float y_rad1, float y_rad2);
 
-	char AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, BAG<FPOINT>& obstacles);
+	char JUNGLE_API AIDispatcher(EVIL& evil, FPOINT hero_center, BAG<FPOINT>& tomahawks, BAG<FPOINT>& obstacles);
 }
