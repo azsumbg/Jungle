@@ -287,6 +287,54 @@ dll::PLATFORM* dll::PLATFORM::create(platforms type, float where_x, float where_
 
 ///////////////////////////////////////////////////
 
+// ASSET class ************************************
+
+dll::ASSET::ASSET(assets _type, float _where_x, float _where_y, dirs _dir) :PROTON(_where_x, _where_y, 32.0f,32.0f)
+{
+	type = _type;
+	dir = _dir;
+}
+
+bool dll::ASSET::move(dirs to_where, float gear)
+{
+	float my_speed = _speed + gear / 5.0f;
+	dir = to_where;
+
+	switch (dir)
+	{
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (end.x - my_speed <= -scr_width)return false;
+		break;
+
+	case dirs::right:
+		start.x += my_speed;
+		set_edges();
+		if (start.x - my_speed >= 2.0f * scr_width)return false;
+		break;
+	}
+
+	return true;
+}
+
+void dll::ASSET::Release()
+{
+	delete this;
+}
+
+dll::ASSET* dll::ASSET::create(assets type, float where_x, float where_y, dirs dir)
+{
+	ASSET* ret{ nullptr };
+
+	ret = new ASSET(type, where_x, where_y, dir);
+
+	return ret;
+}
+
+//////////////////////////////////////////////////
+
+
 // HERO CLASS ************************************
 
 dll::HERO::HERO(float _sx, float _sy) :PROTON(_sx, _sy, 45.0f, 50.0f) {};
@@ -703,7 +751,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 1.3f;
 		damage = 5;
 		lifes = 80;
-		attack_delay = 80;
+		attack_delay = 100;
 		if (_rand(0, 2) == 0)set_path(start.x - 100.0f, sky);
 		else if (_rand(0, 1) == 1)set_path(start.x - 100.0f, ground);
 		else set_path(-scr_width, start.y);
@@ -716,7 +764,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 1.2f;
 		damage = 8;
 		lifes = 60;
-		attack_delay = 90;
+		attack_delay = 30;
 		break;
 
 	case evils::snail:
@@ -726,7 +774,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 1.1f;
 		damage = 10;
 		lifes = 90;
-		attack_delay = 100;
+		attack_delay = 40;
 		break;
 
 	case evils::octopus:
@@ -736,7 +784,7 @@ dll::EVIL::EVIL(evils _type, float _sx, float _sy) :PROTON(_sx, _sy)
 		_speed = 1.1f;
 		damage = 12;
 		lifes = 100;
-		attack_delay = 120;
+		attack_delay = 50;
 		break;
 
 	}
