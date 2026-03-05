@@ -64,7 +64,6 @@ namespace dll
 		size_t m_size{ 1 };
 		size_t next_pos{ 0 };
 		
-
 	public:
 		BAG() :m_ptr{ reinterpret_cast<T*>(calloc(1, sizeof(T))) } {};
 		BAG(size_t capacity) :m_size{ capacity }, m_ptr{ reinterpret_cast<T*>(calloc(capacity, sizeof(T))) } {};

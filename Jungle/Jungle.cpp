@@ -407,7 +407,7 @@ void dll::HERO::jump(float gear)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx + 60.0f;
+					jump_ex = jump_sx + 90.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -423,7 +423,7 @@ void dll::HERO::jump(float gear)
 				{
 					state = JUMP_DOWN;
 					
-					jump_ex = jump_sx - 60.0f;
+					jump_ex = jump_sx - 80.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -440,7 +440,7 @@ void dll::HERO::jump(float gear)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx + 60.0f;
+					jump_ex = jump_sx + 90.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -924,7 +924,7 @@ void dll::EVIL::jump(float gear)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx + 60.0f;
+					jump_ex = jump_sx + 90.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -940,7 +940,7 @@ void dll::EVIL::jump(float gear)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx - 60.0f;
+					jump_ex = jump_sx - 80.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
@@ -957,7 +957,7 @@ void dll::EVIL::jump(float gear)
 				{
 					state = JUMP_DOWN;
 
-					jump_ex = jump_sx + 60.0f;
+					jump_ex = jump_sx + 90.0f;
 					jump_ey = jump_sy;
 
 					jump_sx = start.x;
