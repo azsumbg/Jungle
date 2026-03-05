@@ -390,8 +390,8 @@ void dll::HERO::jump(float gear)
 		on_platform = false;
 		in_jump = true;
 
-		if (dir == dirs::left)jump_ex = jump_sx - 40.0f;
-		else jump_ex = end.x + 40.0f;
+		if (dir == dirs::left)jump_ex = jump_sx - (40.0f + 10.0f * gear);
+		else jump_ex = end.x + 40.0f + 10.0f * gear;
 	}
 	else
 	{
@@ -907,8 +907,8 @@ void dll::EVIL::jump(float gear)
 		on_platform = false;
 		in_jump = true;
 
-		if (dir == dirs::left)jump_ex = jump_sx - 60.0f;
-		else jump_ex = end.x + 60.0f;
+		if (dir == dirs::left)jump_ex = jump_sx - (60.0f + 10.0f * gear);
+		else jump_ex = end.x + 60.0f + (10.0f * gear);
 	}
 	else
 	{
