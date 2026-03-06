@@ -390,8 +390,8 @@ void dll::HERO::jump(float gear)
 		on_platform = false;
 		in_jump = true;
 
-		if (dir == dirs::left)jump_ex = jump_sx - (40.0f + 10.0f * gear);
-		else jump_ex = end.x + 40.0f + 10.0f * gear;
+		if (dir == dirs::left)jump_ex = jump_sx - (40.0f + 12.0f * gear);
+		else jump_ex = end.x + 40.0f + 12.0f * gear;
 	}
 	else
 	{
