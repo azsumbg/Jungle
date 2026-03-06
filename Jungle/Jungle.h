@@ -310,8 +310,12 @@ namespace dll
 			{
 				if (next_pos + 1 < m_size)
 				{
-					for (size_t count = next_pos; count >= index; --count)
-						if (index > 0)m_ptr[count] = m_ptr[count - 1];
+					if (index > 0)
+						for (size_t count = next_pos; count >= index; --count)
+							m_ptr[count] = m_ptr[count - 1];
+					else
+						for (size_t count = next_pos; count > index; --count)
+							m_ptr[count] = m_ptr[count - 1];
 					m_ptr[index] = element;
 					++next_pos;
 				}
@@ -322,8 +326,12 @@ namespace dll
 					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 					else
 					{
-						for (size_t count = next_pos; count >= index; --count)
-							if (index > 0)m_ptr[count] = m_ptr[count - 1];
+						if (index > 0)
+							for (size_t count = next_pos; count >= index; --count)
+								m_ptr[count] = m_ptr[count - 1];
+						else
+							for (size_t count = next_pos; count > index; --count)
+								m_ptr[count] = m_ptr[count - 1];
 						m_ptr[index] = element;
 						++next_pos;
 					}
@@ -343,7 +351,11 @@ namespace dll
 			{
 				if (next_pos + 1 < m_size)
 				{
-					for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
+					if (index > 0)
+						for (size_t count = next_pos; count >= index; --count)m_ptr[count] = m_ptr[count - 1];
+					else
+						for (size_t count = next_pos; count > index; --count)
+							m_ptr[count] = m_ptr[count - 1];
 					m_ptr[index] = *element;
 					++next_pos;
 				}
@@ -354,8 +366,12 @@ namespace dll
 					if (!m_ptr)throw EXCEPTION(BAG_BAD_PTR);
 					else
 					{
-						for (size_t count = next_pos; count >= index; --count)
-							if (index > 0)m_ptr[count] = m_ptr[count - 1];
+						if (index > 0)
+							for (size_t count = next_pos; count >= index; --count)
+								m_ptr[count] = m_ptr[count - 1];
+						else
+							for (size_t count = next_pos; count > index; --count)
+								m_ptr[count] = m_ptr[count - 1];
 						m_ptr[index] = *element;
 						++next_pos;
 					}
